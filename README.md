@@ -23,34 +23,32 @@ Claude (by Anthropic) has unique strengths — strong reasoning, collaborative p
 
 ## How to Use
 
-### Option 1: Cursor / Windsurf / Cline Custom Instructions
+### Method 1: System Prompt in Your AI Tool
 
-Copy the contents of the skill file into your AI coding tool's system prompt or custom instructions field.
+Copy the full contents of `frontend-skills.md` or `backend-skills.md` into your AI coding assistant's system prompt, custom instructions, or rules file. This works with Claude, Cursor, Windsurf, GitHub Copilot, and any tool that supports custom system-level instructions.
 
-**With Cline:** Place the `.md` file in your project and reference it via `.clinerules`.
+### Method 2: Direct Prompt Injection
 
-### Option 2: Direct Prompt Injection
-
-Paste the entire skill prompt at the beginning of your conversation with Claude:
+Paste the skill prompt at the start of your conversation with Claude:
 
 ```
-[Paste frontend-skills.md or backend-skills.md content here]
+[Paste the skill file content here]
 
 ---
 
-Now, [your task here]
+[Your task here]
 ```
 
-### Option 3: Claude Projects (Recommended)
+### Method 3: Claude Projects (Recommended)
 
-Anthropic's Claude Projects feature allows you to set custom instructions:
+Anthropic's Claude Projects feature allows setting persistent custom instructions:
 1. Create a new Project in Claude
 2. Paste the skill prompt content into the "Custom Instructions" field
-3. Start conversations within that Project — Claude will follow the skills protocol automatically
+3. All conversations within that Project will follow the skills protocol automatically
 
-### Option 4: GitHub Copilot / Custom Instructions
+### Method 4: IDE Rules File
 
-Add the content to your IDE's custom instructions/rules file. For VS Code with GitHub Copilot, add to `.github/copilot-instructions.md`.
+Add the content to your IDE's rules file (e.g., `.cursorrules`, `.github/copilot-instructions.md`, or your editor's equivalent) for automatic application to every coding session within that project.
 
 ---
 
