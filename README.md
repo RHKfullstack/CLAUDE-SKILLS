@@ -1,154 +1,94 @@
-# Claude Skills — Professional AI System Prompts
+# Agent Skills
 
-> **Turn Claude into a Principal-level Software Engineer.**
+17 portable agent skills in the canonical `SKILL.md` format: three for design, one stack bridge, thirteen senior engineering audits.
 
-Production-grade system prompts that transform Claude into a senior/staff/principal engineer with deep expertise across frontend and backend engineering. Every prompt is meticulously crafted to enforce best practices, eliminate lazy patterns, and ensure output that is secure, performant, accessible, and maintainable.
+Written to be **model- and tool-agnostic**. The instructions are plain markdown with YAML frontmatter — no plugin runtime, no SDK, no build step required — so the same files work in Claude Code, the Claude apps, the Agent SDK, and any other agent that can read a file.
 
----
+Every skill is a **claim-check procedure**, not an essay. Each phase ends in a named artifact, and a check that was not executed is labelled `PLANNED` or `UNAVAILABLE` — never `PASSED`.
 
-## Why Claude-Specific?
+## Compatibility
 
-Claude (by Anthropic) has unique strengths — strong reasoning, collaborative problem-solving, and safety alignment. These prompts leverage those strengths while adding strict engineering discipline. Unlike generic coding prompts, these include **Claude-specific behavioral guidance** (Section 18 in frontend, Section 16 in backend) covering how to reason step-by-step, explain trade-offs, embrace feedback, and write production-grade safe code.
+| Tool | How it loads | Adapter |
+|---|---|---|
+| **Claude Code** | native `SKILL.md` discovery in `~/.claude/skills/` or `.claude/skills/` | `CLAUDE.md` |
+| **Claude.ai / Desktop** | Settings → Capabilities → Skills → upload a zipped skill folder | — |
+| **Claude Agent SDK** | native, via the `skills` option | `CLAUDE.md` |
+| **Cursor** | reads `.cursor/rules/*.mdc` | `adapters/cursor-skills.mdc` |
+| **GitHub Copilot** | reads `.github/copilot-instructions.md` | `adapters/copilot-instructions.md` |
+| **Codex, Gemini CLI, Aider, Zed, Cline, Roo, Windsurf** | read a repository `AGENTS.md` | `adapters/AGENTS.md` |
+| **Anything else** | point it at `skills/*/SKILL.md` and add an index | `adapters/AGENTS.md` |
 
----
+The adapters are **indexes**, not copies. There is exactly one place to edit a skill: its `SKILL.md`.
 
-## Available Skill Prompts
-
-| Prompt | Role | Coverage |
-|--------|------|----------|
-| [`frontend-skills.md`](./frontend-skills.md) | Principal Frontend Engineer | HTML5 semantics, CSS3 deep fundamentals, TypeScript strict, React 19 hooks, Next.js App Router, state management, Core Web Vitals, WCAG 2.2 AA, testing (unit to E2E), security (CSP, XSS, CSRF), PWA, i18n, design systems, form handling, real-time patterns, CI/CD |
-| [`backend-skills.md`](./backend-skills.md) | Principal Backend Engineer | PHP/Laravel 11+, Node.js/TypeScript (Express, Fastify, NestJS, Hono), Python (Django, FastAPI), Go, PostgreSQL/MySQL indexing, Redis, MongoDB, REST/GraphQL/gRPC, auth (JWT, OAuth2, Passkeys, RBAC/ABAC/ReBAC), Clean/CQRS/Event-Driven architecture, caching, queues, OWASP Top 10, DevOps (Docker, CI/CD, Terraform), testing |
-
----
-
-## How to Use
-
-### Method 1: System Prompt in Your AI Tool
-
-Copy the full contents of `frontend-skills.md` or `backend-skills.md` into your AI coding assistant's system prompt, custom instructions, or rules file. This works with Claude, Cursor, Windsurf, GitHub Copilot, and any tool that supports custom system-level instructions.
-
-### Method 2: Direct Prompt Injection
-
-Paste the skill prompt at the start of your conversation with Claude:
+## Structure
 
 ```
-[Paste the skill file content here]
-
----
-
-[Your task here]
+skills/<name>/SKILL.md      canonical skill (YAML frontmatter: name, description)
+adapters/AGENTS.md          index for AGENTS.md-reading agents
+adapters/CLAUDE.md          project memory for Claude Code
+adapters/copilot-instructions.md
+adapters/cursor-skills.mdc
+scripts/build-adapters.mjs  regenerates every adapter from skills/
 ```
 
-### Method 3: Claude Projects (Recommended)
+## The skills
 
-Anthropic's Claude Projects feature allows setting persistent custom instructions:
-1. Create a new Project in Claude
-2. Paste the skill prompt content into the "Custom Instructions" field
-3. All conversations within that Project will follow the skills protocol automatically
+### Design
 
-### Method 4: IDE Rules File
+| Skill | Use when |
+|---|---|
+| `creative-designer` | Any medium that is not a browser page: desktop app, mobile, print/PDF, slides, social graphics. Supplies the shared method and the per-medium constraint sets. |
+| `ui-design` | Web visual craft: tokens, spacing rhythm, the eight component states, the rejection list, the pass/fail rubric, the screenshot-critique loop. |
+| `senior-frontend-engineering` | React correctness, WCAG 2.2 AA, Core Web Vitals budgets, browser-level proof, client security, i18n. |
 
-Add the content to your IDE's rules file (e.g., `.cursorrules`, `.github/copilot-instructions.md`, or your editor's equivalent) for automatic application to every coding session within that project.
+### Stack
 
----
+| Skill | Use when |
+|---|---|
+| `stack-php-mysql` | Laravel/PHP + MySQL + Redis + Windows. Translates every senior phase into an executable command so an evidence gate resolves to something runnable instead of `UNAVAILABLE`. |
 
-## What Makes These Different?
+### Engineering
 
-| Trait | Default AI Code | With These Prompts |
-|-------|----------------|-------------------|
-| **Error handling** | Often missing | Every state handled (loading, empty, error, edge cases) |
-| **Accessibility** | Usually ignored | WCAG 2.2 AA built-in, keyboard nav, screen reader tested |
-| **Security** | Minimal | CSP, XSS prevention, CSRF, auth patterns, OWASP coverage |
-| **Performance** | Not considered | Core Web Vitals, caching strategies, N+1 prevention, indexing |
-| **Type safety** | `any` creep | Strict TypeScript, branded types, zod validation, no `any` |
-| **Testing** | Rarely included | Test pyramid, MSW, RTL, Playwright, AAA pattern |
-| **Code quality** | Works but messy | Named conventions, SOLID, design patterns, anti-pattern awareness |
-| **Completeness** | TODOs and stubs | Full implementations, no placeholders, production-ready |
-| **Claude-native behavior** | Generic | Step-by-step reasoning, trade-off explanations, collaborative coding |
+| Skill | Use when |
+|---|---|
+| `senior-code-review` | Judging a diff before it lands. |
+| `senior-work-audit` | Certifying a change set, branch or subsystem as finished. |
+| `senior-test-adequacy` | Deciding whether the tests actually prove the change. |
+| `senior-data-migration-safety` | Schema change, backfill, index build, column drop. |
+| `senior-performance-audit` | Something is slow, or a performance claim needs a number. |
+| `senior-reliability-review` | SLOs, alerting, on-call, incident readiness. |
+| `senior-release-gate` | Go/no-go before a deploy. |
+| `senior-system-hardening` | Host, container, secrets and network posture. |
+| `senior-supply-chain-audit` | Dependencies, lockfiles, provenance, CI trust. |
+| `senior-threat-model` | A new service, integration or trust boundary. |
+| `senior-architecture-review` | A design or RFC where the choice is between structures. |
+| `senior-app-security` | Auth, permissions, uploads, rendered HTML, multi-tenancy. |
+| `senior-background-jobs` | Queues, retries, workers, cron, `failed_jobs`, Redis. |
 
----
+## How a skill behaves
 
-## Project Structure
+1. **Progressive disclosure.** Only the `name` and `description` sit in context until the skill is needed; the body loads on use.
+2. **Evidence per phase.** Each phase ends in an `EVIDENCE:` artifact — a command output, a `file:line`, a measurement.
+3. **No silent success.** `PLANNED` and `UNAVAILABLE` are explicit states. A missing tool is reported, not skipped.
+4. **One authority per subject.** `senior-data-migration-safety` owns migration measurement and `senior-release-gate` only summarizes it; `senior-test-adequacy` judges tests while `senior-work-audit` judges the change.
 
-```
-claude-skills/
-├── README.md                  # This file
-├── frontend-skills.md         # Frontend engineering prompt
-└── backend-skills.md          # Backend engineering prompt
-```
+## Install
 
----
+See [INSTALL.md](INSTALL.md).
 
-## Getting Started
-
-### Clone the Repository
+## Regenerating the adapters
 
 ```bash
-git clone https://github.com/RHKfullstack/CLAUDE-SKILLS.git
-cd CLAUDE-SKILLS
+node scripts/build-adapters.mjs          # rewrite adapters/
+node scripts/build-adapters.mjs --check  # exit 1 if any adapter is stale
 ```
 
-### Quick Start
+The script validates every skill's frontmatter and fails if a directory name and its `name:` field disagree, so a broken skill cannot ship silently.
 
-1. Open the skill file you need:
-   - `frontend-skills.md` — for frontend tasks
-   - `backend-skills.md` — for backend tasks
+## Requirements
 
-2. Copy the entire contents.
+None for use — the skills are markdown. Node.js 18+ is needed only to run the adapter generator.
 
-3. Paste into Claude as a system prompt, or add to your Claude Project custom instructions.
+## Proof
 
-4. Start coding with a Principal-level engineer guiding Claude's output.
-
-### Stay Updated
-
-```bash
-git pull origin main
-```
-
----
-
-## Contributing
-
-These prompts are living documents. If you find gaps, anti-patterns that should be added, or have suggestions for improvement:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Open a pull request with a clear description
-
-Focus contributions on:
-- Missing production concerns
-- New framework versions and their best practices
-- Anti-patterns that should be explicitly called out
-- Better Claude-specific behavioral guidance
-
----
-
-## Related Repositories
-
-- [DEEPSEEK-SKILLS](https://github.com/RHKfullstack/DEEPSEEK-SKILLS) — The same prompts optimized for DeepSeek
-- More AI platform-specific skills coming soon
-
----
-
-## Roadmap
-
-- [ ] `fullstack-skills.md` — Combined full-stack engineering prompt
-- [ ] `devops-skills.md` — DevOps & infrastructure prompt
-- [ ] `mobile-skills.md` — React Native / Flutter prompt
-- [ ] `system-design-skills.md` — System design & architecture prompt
-- [ ] `security-skills.md` — Dedicated application security prompt
-- [ ] `code-review-skills.md` — Code review & PR review prompt
-
----
-
-## License
-
-MIT — Use, modify, and distribute freely. Attribution appreciated but not required.
-
----
-
-<p align="center">
-  <b>Built with ❤️ for engineers who want Claude to produce real production code.</b>
-</p>
+The same pack, applied end to end, produced the storefront screenshotted in [RHKfullstack/DEEPSEEK-SKILLS](https://github.com/RHKfullstack/DEEPSEEK-SKILLS#proof): zero console errors, no horizontal scroll at 390px, 44px tap targets.
