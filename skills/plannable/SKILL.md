@@ -1,7 +1,6 @@
 ---
 name: plannable
 description: Create and execute scenario-driven implementation plans with MASTER_PLAN.md, one PlannablePlan part at a time, and evidence-gated completion.
-whenToUse: Use for plannable create, run-next, status, verify, evidence, complete, compress, or expand.
 ---
 
 # Plannable
@@ -53,3 +52,26 @@ plannable repair               # regenerate PLAN_STATE.md
 - Each part must be verified before it is checked off: run the listed verification commands, capture real output, record it via `plannable evidence` before `plannable complete`.
 - Distinguish planned, implemented, passed, and unavailable. Do not claim a part is done without evidence.
 - `plannable verify` / `complete` audit plan state and evidence; they do not certify application security.
+
+## Bundled references
+
+The safeguard/guidance modules for the enrichment step ship beside this file. Start with `guidance.md`
+(the index), then read only the modules whose trigger applies:
+
+| file | covers |
+|---|---|
+| `references/plannable/guidance.md` | index - how to select and apply the rules |
+| `references/plannable/baseline.md` | `baseline.secrets` (always), `baseline.dependencies` (dependencies) |
+| `references/plannable/access.md` | `access.owner`, `access.login`, `access.session` |
+| `references/plannable/data.md` | `data.recovery` (storedData) |
+| `references/plannable/input.md` | `input.boundary`, `input.files`, `input.urls` |
+| `references/plannable/quality.md` | `quality.change` (always), `quality.ui` (ui) |
+| `references/plannable/services.md` | `services.events`, `services.resources` |
+
+Rules: handle routine safeguards without asking whether they are wanted; ask only unresolved product
+choices. Reuse rules already inline in the current revision; load a module text only to add, refresh or
+resolve a rule. Never infer scope from the product name or package presence alone - unknown is not
+absent. Add a `CTX: - basis[rule.id]: <why it applies>` line plus `[rule.id]` text in `C`, `T`,
+`AC` and `V`; IDs alone are insufficient. Record the rule ID, the changed path, the actual command or
+manual check, the observed result, and the limits. Planned, implemented, passed and unavailable are
+different labels - never label an unavailable check passed.
