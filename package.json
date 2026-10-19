@@ -1,0 +1,15 @@
+{
+  "name": "@rhkfullstack/agent-skills",
+  "version": "1.0.0",
+  "private": true,
+  "description": "20 portable agent skills in the canonical SKILL.md format, with generated adapters for Claude Code, Cursor, Copilot and AGENTS.md-reading agents.",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-skills.mjs",
+    "adapters": "node scripts/build-adapters.mjs",
+    "adapters:check": "node scripts/build-adapters.mjs --check"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

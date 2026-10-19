@@ -24,11 +24,14 @@ The adapters are **indexes**, not copies. There is exactly one place to edit a s
 
 ```
 skills/<name>/SKILL.md      canonical skill (YAML frontmatter: name, description)
+skills/<name>/references/   optional supporting files, cited by relative path
 adapters/AGENTS.md          index for AGENTS.md-reading agents
 adapters/CLAUDE.md          project memory for Claude Code
 adapters/copilot-instructions.md
 adapters/cursor-skills.mdc
 scripts/build-adapters.mjs  regenerates every adapter from skills/
+scripts/validate-skills.mjs checks the contract and the adapter freshness
+.github/workflows/validate.yml  runs the same checks on every push and PR
 ```
 
 ## The skills
@@ -85,6 +88,25 @@ scripts/build-adapters.mjs  regenerates every adapter from skills/
 ## Install
 
 See [INSTALL.md](INSTALL.md).
+
+## Validate
+
+```bash
+node scripts/validate-skills.mjs
+```
+
+| Check | Fails when |
+|---|---|
+| `E1` | `SKILL.md` has no frontmatter, or starts with a UTF-8 BOM |
+| `E2` | `name` or `description` is missing |
+| `E3` | `name` is not `^[a-z0-9-]{1,64}$`, or does not match the directory |
+| `E4` | `description` exceeds 1024 characters |
+| `E5` | the body is empty, or cites an absolute machine path |
+| `E6` | a cited `references/...` file does not exist |
+| `E7` | an adapter is stale |
+| `E8` | README or INSTALL quotes the wrong skill count |
+
+`W1` warns when a body passes 500 lines — the progressive-disclosure guidance — without failing the build. A skill over that line should move detail into `references/`.
 
 ## Regenerating the adapters
 

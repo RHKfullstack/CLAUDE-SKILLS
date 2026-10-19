@@ -234,45 +234,11 @@ Rules:
 
 ## Settling empty folders
 
-The owner authorizes this: a directory with no entries that nothing uses any more is removed as part
-of the routine sweep, not deferred. An empty folder is not "harmless" — it is an unfinished
-decision, and it is the residue that makes the next reader wonder whether something was deleted.
+The owner authorises this: a directory with zero entries that nothing uses any more is removed in the same sweep, not deferred. It is settled only when all seven conditions hold - no entries; no tracked file beneath it; not the sink or engine state; not a framework-required directory; not a junction or mount point; not the root; not an ancestor of anything the plan keeps or reports.
 
-A directory is settled only when **all seven** conditions hold. One failure means it is reported,
-never settled. The sweep reaches this at the `light` scope and above, so an empty folder is settled by
-the everyday sweep rather than deferred to a deep one:
+A `.gitkeep` counts as an entry, so such a directory is **not** empty. Settlement is reversible and journalled (S1), runs inside the shown plan, deepest first, and only after the plan's moves have run.
 
-1. No entries at all, or every entry beneath it is being moved or purged by this same plan.
-2. No tracked file anywhere beneath it — `git ls-files -- <dir>` returns nothing.
-3. Not a sink directory: not `.work/`, not a sink subdirectory, not the engine's state or quarantine.
-4. Not a directory the framework requires to exist, even when empty: `storage/framework/cache`,
-   `storage/framework/sessions`, `storage/framework/views`, `storage/app/public`, `bootstrap/cache`.
-5. Not a junction, mount point, or reparse point — never traversed, never removed.
-6. Not the project root, and not an ancestor of anything this plan keeps or reports.
-7. Not a directory the user named as wanted.
-
-A placeholder is an entry. A `.gitkeep`-only directory is **not** empty and is not settled — the
-placeholder is exactly the statement "this must stay". The framework directories in condition 4 are
-empty in a fresh checkout and break the running app when they disappear.
-
-Settlement is reversible and journalled, so it is an S1 action and runs inside the shown plan with no
-further approval. The journal's inverse recreates the directory, so the undo is real and not a promise:
-
-    {"action":"settle","from":"abs/path/dir","class":"S1","inverse":{"op":"mkdir"},"undo":"mkdir \"abs/path/dir\""}
-
-Ordering rules: settle **deepest first**, and only **after** this plan's moves and purges have run —
-a parent becomes empty only once its children have settled. A directory that is a parent of anything
-kept or reported is not settled (condition 6), so the order is also what keeps the sweep from removing
-a folder that is still holding a survivor.
-
-A settled directory is recorded in the plan and in `MANIFEST.md`, with the check that proved it empty.
-Git tracks files, not folders: `git ls-files -- <dir>` lists what git owns beneath a path and a
-directory with no entries contributes nothing to it
-([git-ls-files](https://git-scm.com/docs/git-ls-files)). So `git status` cannot confirm the removal —
-the verification command is the filesystem itself: `Test-Path -LiteralPath <dir>` returns `False`, or
-`test -d <dir>` exits non-zero. On a fresh clone, absent and never-created look identical; that is why
-the journal, not git, is the record.
-
+The full condition list, the framework-required directory table, and the worked examples live in `references/organizer/paths.md`.
 ## The four safety classes
 
 Classification says whether an item may be removed. The safety class says how the removal is gated.
@@ -395,56 +361,11 @@ Every removal command obeys all of these. A command that breaks one is not run.
 
 ## Backups: retention and disposition
 
-A backup is not "done" when it is written; it is done when it has a disposition, a retention rule,
-and a record. The full policy is in `backups.md`.
+A backup is not done when it is written; it is done when it has a disposition - **keep**, **supersede**, **archive** or **remove** - a retention rule, and a record. Names carry an ISO-8601 date. No backup is removed without a plan the user saw.
 
-- Every backup gets one named disposition at creation: **keep**, **supersede**, **archive**, or
-  **remove**. No blank dispositions, ever.
-- Every backup name carries an ISO-8601 date: `root-ai-codebase-2026-08-18.zip`, not `backup2.zip`
-  or `final-final.zip`.
-- **Never silent deletion.** No backup is removed without a plan the user saw and the gate its
-  safety class requires.
-- **Never unbounded growth.** A sweep that finds a scope over its retention budget produces a plan
-  in the same turn. Reporting the growth without planning the reduction is the failure the owner
-  described.
-- **Keep-latest retention.** Per backup family, exactly one `keep` — the newest **verified** copy —
-  and at most one `previous`, the copy immediately before it, held as the fallback until a restore
-  drill verifies the newer one. Every older copy is `supersede`: removable at S3, confirmed per item,
-  by name. That is the whole policy, and it is why old copies do not accumulate.
-- **`previous` is a role, not a fifth disposition.** The four dispositions are unchanged; the role is
-  recorded beside the disposition, and a `previous` copy's disposition is `keep`. So a listing with
-  two `keep` rows in one family is correct and expected, for exactly one reason: the newer copy has no
-  restore evidence yet. Both rows say why in their own note.
-- **The safety floor, which outranks the policy.** Never remove the only copy of a family — a sole
-  copy is `keep` whatever its age, and is never archived or removed "because it is stale". Never
-  remove a copy while the newer copy has no restore evidence: when the newest copy is unverified,
-  **nothing in that family is proposed for removal at all**, and the plan says so per copy. A family
-  the sweep cannot prove was ever restored is left alone and reported as such, because a move and a
-  purge are both irreversible in effect for the reader who needed that file.
-- **The floor is not released by asking for a purge.** An irreversible purge still applies only to
-  copies the floor already marked `supersede`, so it can never be pointed at the fallback or the last
-  copy. Reclaiming bytes in an unverified family starts with running a restore drill, not with a
-  stronger flag.
-- **A reversible move does not free disk space.** Say this plainly and never imply otherwise: a
-  quarantine move leaves the bytes on the same volume, so it protects the owner's ability to change
-  their mind, not their free space. When the owner's goal is reclaiming bytes, the choices are the
-  tool's own retention, deleting the superseded copy by name under its per-item confirmation, or
-  having that copy planned as an irreversible `purge`. The owner chooses; the agent does not assume
-  which of the three they wanted.
-- Never remove the last verified backup of a scope. Never remove a backup before a newer
-  restore-checked backup of the same scope exists.
-- An untested backup is a hypothesis. A backup becomes verified only when a restore drill has
-  restored at least one file from it and a hash comparison matched. This skill has no restore-drill
-  automation: `verified` is a drill a person ran and recorded, and with no record the engine treats
-  every copy as unverified and keeps it.
-- The record lives in `backups/BACKUPS.md`, one row per backup: name, scope, created, bytes,
-  sha256, disposition, retention role, superseded-by, verified-date, restore evidence, next review.
+Retention is keep-latest: per family exactly one `keep` (the newest verified copy), at most one `previous` held as the fallback, every older copy `supersede` and removable only at S3, confirmed per item by name. The safety floor outranks the policy: never remove the only copy of a family, and never remove a copy while the newer copy has no restore evidence.
 
-For a byte-reclaiming sweep there is one more supported step beyond a move: an irreversible purge,
-planned that way and confirmed per item by name, which is the only path that actually releases the
-bytes. It is offered, never assumed — the plan shows which copies are moves and which are purges, and
-the owner decides.
-
+The record is `backups/BACKUPS.md`. The full policy, the 3-2-1 rule and the restore drill live in `references/organizer/backups.md`.
 ## Bundled references
 
 The detail ships beside this file. Read only the module whose trigger applies; the summary above is
