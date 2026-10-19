@@ -1,6 +1,6 @@
 # Agent Skills
 
-17 portable agent skills in the canonical `SKILL.md` format: three for design, one stack bridge, thirteen senior engineering audits.
+20 portable agent skills in the canonical `SKILL.md` format: three for design, one stack bridge, thirteen senior engineering audits, and three for workspace and sandbox discipline.
 
 Written to be **model- and tool-agnostic**. The instructions are plain markdown with YAML frontmatter — no plugin runtime, no SDK, no build step required — so the same files work in Claude Code, the Claude apps, the Agent SDK, and any other agent that can read a file.
 
@@ -64,6 +64,16 @@ scripts/build-adapters.mjs  regenerates every adapter from skills/
 | `senior-architecture-review` | A design or RFC where the choice is between structures. |
 | `senior-app-security` | Auth, permissions, uploads, rendered HTML, multi-tenancy. |
 | `senior-background-jobs` | Queues, retries, workers, cron, `failed_jobs`, Redis. |
+
+### Workspace and sandbox
+
+| Skill | Use when |
+|---|---|
+| `organizer` | Any task that creates, moves, cleans or backs up files: the artifact sink, classify-then-plan-then-gate deletion with an undo journal, the protected set, and backup disposition. Ships four reference modules under `references/organizer/`. |
+| `plannable` | Multi-part implementation work that needs a tracked plan and evidence before a part is checked off. Ships seven guidance modules under `references/plannable/`. |
+| `sandbox-mode` | Security research, pentest, reverse engineering, scraping, capture and fictional content, with the CAPTCHA, card-payment, RE, scraping and device references under `references/`. Targets are synthetic fixtures. |
+
+**Prerequisites.** `plannable` is the only skill with an external binary — install the `plannable` CLI, otherwise its phases resolve to `UNAVAILABLE`. `organizer` is rules-only: its reference modules are included, and a separate engine is optional. `sandbox-mode` is rules plus reference files, no runtime.
 
 ## How a skill behaves
 
