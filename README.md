@@ -1,6 +1,6 @@
 # Agent Skills
 
-20 portable agent skills in the canonical `SKILL.md` format: three for design, one stack bridge, thirteen senior engineering audits, and three for workspace and sandbox discipline.
+22 portable agent skills in the canonical `SKILL.md` format: three for design, three stack bridges, thirteen senior engineering audits, and three for workspace and sandbox discipline.
 
 Written to be **model- and tool-agnostic**. The instructions are plain markdown with YAML frontmatter — no plugin runtime, no SDK, no build step required — so the same files work in Claude Code, the Claude apps, the Agent SDK, and any other agent that can read a file.
 
@@ -49,6 +49,8 @@ scripts/validate-skills.mjs checks the contract and the adapter freshness
 | Skill | Use when |
 |---|---|
 | `stack-php-mysql` | Laravel/PHP + MySQL + Redis + Windows. Translates every senior phase into an executable command so an evidence gate resolves to something runnable instead of `UNAVAILABLE`. |
+| `stack-index` | Any language that is not PHP or React. Routes 22 languages to their executable command set with a verification badge, and derives the set for any unlisted language. |
+| `stack-python` | Python projects. venv, pytest, ruff, mypy, coverage and pip-audit, with absent tools recorded as blocked rather than passing. |
 
 ### Engineering
 
