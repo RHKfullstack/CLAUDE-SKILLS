@@ -1,6 +1,6 @@
 ---
 name: senior-code-review
-description: Apply the senior code-review bar to a diff: correctness under failure, boundary and error paths, concurrency, data and schema safety, test quality and reviewer-side verification.
+description: Apply the senior code-review bar to a diff - correctness under failure, boundary and error paths, concurrency, data and schema safety, test quality and reviewer-side verification.
 ---
 
 # Senior Code Review

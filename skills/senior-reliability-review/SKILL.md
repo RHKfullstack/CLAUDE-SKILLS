@@ -1,6 +1,6 @@
 ---
 name: senior-reliability-review
-description: Review reliability the way an on-call engineer experiences it: SLOs and error budgets, observability, alert quality and fatigue, failure and retry semantics, capacity, dependency behaviour and incident readiness.
+description: Review reliability the way an on-call engineer experiences it - SLOs and error budgets, observability, alert quality and fatigue, failure and retry semantics, capacity, dependency behaviour and incident readiness.
 ---
 
 # Senior Reliability Review

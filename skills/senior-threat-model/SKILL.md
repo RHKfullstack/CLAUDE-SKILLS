@@ -1,6 +1,6 @@
 ---
 name: senior-threat-model
-description: Produce a threat model: assets, trust boundaries, entry points, STRIDE-style threat enumeration, abuse cases, mitigations and the residual risk that remains.
+description: Produce a threat model - assets, trust boundaries, entry points, STRIDE-style threat enumeration, abuse cases, mitigations and the residual risk that remains.
 ---
 
 # Senior Threat Model

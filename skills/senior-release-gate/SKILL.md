@@ -1,6 +1,6 @@
 ---
 name: senior-release-gate
-description: Run a release-readiness gate: what must be proven before a deploy, rollback and migration safety, observability, capacity, runbooks and the explicit go/no-go with its evidence.
+description: Run a release-readiness gate - what must be proven before a deploy, rollback and migration safety, observability, capacity, runbooks and the explicit go/no-go with its evidence.
 ---
 
 # Senior Release Gate

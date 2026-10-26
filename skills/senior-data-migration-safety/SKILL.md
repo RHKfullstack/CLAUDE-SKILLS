@@ -1,6 +1,6 @@
 ---
 name: senior-data-migration-safety
-description: Make a schema or data migration safe: expand/contract ordering, reversibility, backfill batching, lock impact, compatibility with old and new code, and the restore drill that proves the backup.
+description: Make a schema or data migration safe - expand/contract ordering, reversibility, backfill batching, lock impact, compatibility with old and new code, and the restore drill that proves the backup.
 ---
 
 # Senior Data Migration Safety

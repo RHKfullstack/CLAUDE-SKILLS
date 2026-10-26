@@ -1,6 +1,6 @@
 ---
 name: senior-performance-audit
-description: Audit performance by measurement: a baseline before any change, the real bottleneck rather than the suspected one, query and allocation analysis, load shape, and the regression guard that keeps the gain.
+description: Audit performance by measurement - a baseline before any change, the real bottleneck rather than the suspected one, query and allocation analysis, load shape, and the regression guard that keeps the gain.
 ---
 
 # Senior Performance Audit

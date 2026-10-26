@@ -1,6 +1,6 @@
 ---
 name: senior-test-adequacy
-description: Judge whether the tests actually prove the change: coverage that matters, assertion quality, negative and boundary cases, determinism, and the gap between a green suite and verified behaviour.
+description: Judge whether the tests actually prove the change - coverage that matters, assertion quality, negative and boundary cases, determinism, and the gap between a green suite and verified behaviour.
 ---
 
 # Senior Test Adequacy

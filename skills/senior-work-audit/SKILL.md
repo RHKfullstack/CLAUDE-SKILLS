@@ -1,6 +1,6 @@
 ---
 name: senior-work-audit
-description: Run a senior-level audit of a change set, a subsystem or a whole repository: correctness, security, performance, operability and maintainability, with every finding carrying evidence and a severity.
+description: Run a senior-level audit of a change set, a subsystem or a whole repository - correctness, security, performance, operability and maintainability, with every finding carrying evidence and a severity.
 ---
 
 # Senior Work Audit

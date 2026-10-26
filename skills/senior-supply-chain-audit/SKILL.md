@@ -1,6 +1,6 @@
 ---
 name: senior-supply-chain-audit
-description: Audit the software supply chain: dependency risk and provenance, lockfile and version pinning, SBOM, build reproducibility, artifact signing and CI/CD pipeline trust.
+description: Audit the software supply chain - dependency risk and provenance, lockfile and version pinning, SBOM, build reproducibility, artifact signing and CI/CD pipeline trust.
 ---
 
 # Senior Supply Chain Audit

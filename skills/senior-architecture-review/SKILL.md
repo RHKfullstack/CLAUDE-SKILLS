@@ -1,6 +1,6 @@
 ---
 name: senior-architecture-review
-description: Review a design against a senior bar: boundaries and coupling, failure isolation, data ownership, evolvability, decision records, and the operational consequences of the shape that was chosen.
+description: Review a design against a senior bar - boundaries and coupling, failure isolation, data ownership, evolvability, decision records, and the operational consequences of the shape that was chosen.
 ---
 
 # Senior Architecture Review

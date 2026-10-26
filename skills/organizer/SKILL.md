@@ -1,6 +1,6 @@
 ---
 name: organizer
-description: Keep a workspace clean and accountable: a fixed sink for every artifact an agent creates, classify-then-plan-then-gate deletion with an undo journal, a protected set that is never planned, and a retention rule that gives every backup a named disposition.
+description: Keep a workspace clean and accountable - a fixed sink for every artifact an agent creates, classify-then-plan-then-gate deletion with an undo journal, a protected set that is never planned, and a retention rule that gives every backup a named disposition.
 ---
 
 # Organizer

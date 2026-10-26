@@ -70,6 +70,9 @@ for (const dir of dirs) {
   // E2
   if (!fm.name) fail("E2", `skills/${dir}: frontmatter has no name`);
   if (!fm.description) fail("E2", `skills/${dir}: frontmatter has no description`);
+  // A colon followed by a space ends an unquoted YAML scalar early and the loader
+  // drops the skill entirely - this is how game-design vanished from the catalog.
+  if (fm.description && /:\s/.test(fm.description)) fail("E2b", `skills/${dir}: description contains a colon-space and breaks the YAML scalar`);
 
   // E3
   if (fm.name) {

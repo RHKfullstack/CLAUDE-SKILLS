@@ -1,6 +1,6 @@
 ---
 name: senior-system-hardening
-description: Harden a running system or a build pipeline: least privilege, secrets, network exposure, container and host baselines, logging, backups and recovery, each change tied to a verified control.
+description: Harden a running system or a build pipeline - least privilege, secrets, network exposure, container and host baselines, logging, backups and recovery, each change tied to a verified control.
 ---
 
 # Senior System Hardening
