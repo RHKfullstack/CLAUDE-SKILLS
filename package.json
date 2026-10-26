@@ -1,15 +1,38 @@
 {
   "name": "@rhkfullstack/agent-skills",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "20 portable agent skills in the canonical SKILL.md format, with generated adapters for Claude Code, Cursor, Copilot and AGENTS.md-reading agents.",
+  "description": "22 portable agent skills in the canonical SKILL.md format, with generated adapters for Claude Code, Cursor, Copilot and AGENTS.md-reading agents, and a DSH bundle so the same repository also installs as a DeepSeek Harness plugin.",
   "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "skills",
+    "adapters",
+    "scripts"
+  ],
   "scripts": {
     "validate": "node scripts/validate-skills.mjs",
     "adapters": "node scripts/build-adapters.mjs",
-    "adapters:check": "node scripts/build-adapters.mjs --check"
+    "adapters:check": "node scripts/build-adapters.mjs --check",
+    "check": "node --check index.js"
   },
   "engines": {
     "node": ">=18"
+  },
+  "dsh": {
+    "id": "dsh-claude-skills",
+    "name": "Agent Skills (portable, 22 skills)",
+    "version": "1.1.0",
+    "permissions": "system-prompt injection",
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   }
 }

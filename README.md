@@ -89,7 +89,19 @@ scripts/validate-skills.mjs checks the contract and the adapter freshness
 
 ## Install
 
-See [INSTALL.md](INSTALL.md).
+### As a DSH plugin
+
+```
+https://github.com/RHKfullstack/CLAUDE-SKILLS.git
+```
+
+The repository root declares `dsh.bundle.patch` → `cordis.patch.yml`, and `index.js` registers all 22 skills with each skill's own folder as its resource base. Install this way when the DSH app is running a Claude model and you want the same pack mounted there; it is the same files, no second copy to maintain.
+
+> Without `dsh.bundle` the installer reports *"This package declares no bundle, so it cannot be managed as a plugin"* — the bundle was added in 1.1.0.
+
+### Everywhere else
+
+See [INSTALL.md](INSTALL.md) — Claude Code, the Claude apps, the Agent SDK, Cursor, Copilot, and any AGENTS.md-reading agent.
 
 ## Validate
 
