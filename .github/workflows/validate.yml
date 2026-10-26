@@ -16,6 +16,7 @@ jobs:
         with:
           node-version: 20
       - name: Validate skills
-        run: node scripts/validate-skills.mjs
+      - name: Install the YAML parser the validator uses
+        run: npm install --no-save yaml@2        run: node scripts/validate-skills.mjs
       - name: Check adapters are current
         run: node scripts/build-adapters.mjs --check

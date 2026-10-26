@@ -26,6 +26,14 @@ const skillsDir = join(root, "skills");
 const errors = [];
 const warnings = [];
 const fail = (id, msg) => errors.push(`${id} ${msg}`);
+// A real YAML parser when the package is present. The lint checks below cannot see
+// other YAML breakage (unbalanced quotes, tab indentation, duplicate keys).
+let parseYaml = null;
+try {
+  parseYaml = (await import("yaml")).parse;
+} catch {
+  console.warn("W0 the yaml module is not installed - frontmatter syntax is lint-checked only");
+}
 const warn = (id, msg) => warnings.push(`${id} ${msg}`);
 
 function readFrontmatter(raw) {
@@ -73,6 +81,14 @@ for (const dir of dirs) {
   // A colon followed by a space ends an unquoted YAML scalar early and the loader
   // drops the skill entirely - this is how game-design vanished from the catalog.
   if (fm.description && /:\s/.test(fm.description)) fail("E2b", `skills/${dir}: description contains a colon-space and breaks the YAML scalar`);
+  // E2c - a real YAML parse when available; the lint above cannot see other breakage.
+  if (parseYaml) {
+    try {
+      parseYaml(raw.slice(3, raw.indexOf("\n---", 3)));
+    } catch (e) {
+      fail("E2c", `skills/${dir}: frontmatter is not valid YAML - ${String(e.message).split("\n")[0]}`);
+    }
+  }
 
   // E3
   if (fm.name) {

@@ -100,6 +100,7 @@ The repository root declares `dsh.bundle.patch` → `cordis.patch.yml`, and `ind
 > Without `dsh.bundle` the installer reports *"This package declares no bundle, so it cannot be managed as a plugin"* — the bundle was added in 1.1.0.
 
 ### Everywhere else
+> **Do not install this pack and the DSH senior plugin into the same profile.** Both provide the eleven `senior-*` audits, and a duplicate name is a registration conflict. Install one or the other, not both.
 
 See [INSTALL.md](INSTALL.md) — Claude Code, the Claude apps, the Agent SDK, Cursor, Copilot, and any AGENTS.md-reading agent.
 
