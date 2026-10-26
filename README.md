@@ -1,6 +1,6 @@
 # Agent Skills
 
-23 portable agent skills in the canonical `SKILL.md` format: three for design, three stack bridges, thirteen senior engineering audits, and three for workspace and sandbox discipline.
+25 portable agent skills in the canonical `SKILL.md` format: three for design, three stack bridges, thirteen senior engineering audits, and three for workspace and sandbox discipline.
 
 Written to be **model- and tool-agnostic**. The instructions are plain markdown with YAML frontmatter — no plugin runtime, no SDK, no build step required — so the same files work in Claude Code, the Claude apps, the Agent SDK, and any other agent that can read a file.
 
@@ -95,7 +95,7 @@ scripts/validate-skills.mjs checks the contract and the adapter freshness
 https://github.com/RHKfullstack/CLAUDE-SKILLS.git
 ```
 
-The repository root declares `dsh.bundle.patch` → `cordis.patch.yml`, and `index.js` registers all 23 skills with each skill's own folder as its resource base. Install this way when the DSH app is running a Claude model and you want the same pack mounted there; it is the same files, no second copy to maintain.
+The repository root declares `dsh.bundle.patch` → `cordis.patch.yml`, and `index.js` registers all 25 skills with each skill's own folder as its resource base. Install this way when the DSH app is running a Claude model and you want the same pack mounted there; it is the same files, no second copy to maintain.
 
 > Without `dsh.bundle` the installer reports *"This package declares no bundle, so it cannot be managed as a plugin"* — the bundle was added in 1.1.0.
 
