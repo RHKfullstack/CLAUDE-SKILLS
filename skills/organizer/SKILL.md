@@ -262,7 +262,7 @@ Rules:
 
 ## Settling empty folders
 
-The owner authorises this: a directory with zero entries that nothing uses any more is removed in the same sweep, not deferred. It is settled only when all seven conditions hold - no entries; no tracked file beneath it; not the sink or engine state; not a framework-required directory; not a junction or mount point; not the root; not an ancestor of anything the plan keeps or reports.
+The owner authorises this: a directory with zero entries that nothing uses any more is removed in the same sweep, not deferred. It is settled only when all seven conditions hold - no entries; no tracked file beneath it; not the sink or engine state; not a framework-required directory; not a junction or mount point; not the root; not an ancestor of anything the plan keeps or reports; not a directory the user named as wanted.
 
 A `.gitkeep` counts as an entry, so such a directory is **not** empty. Settlement is reversible and journalled (S1), runs inside the shown plan, deepest first, and only after the plan's moves have run.
 
@@ -308,7 +308,7 @@ row, list it under "protected, not planned" with the matching reason, and regene
 - Project contracts and entry points: `README*`, `LICENSE*`, `CHANGELOG*`, `CONTRIBUTING*`, `docs/**`, `package.json`, `composer.json`, `requirements.txt`, `go.mod`, `Cargo.toml`, lockfiles, `Dockerfile`, `.github/workflows/**`, `.gitlab-ci.yml`, migration directories.
 - Dependency and toolchain trees the package manager owns: `vendor/`, `node_modules/`, `.venv/`, `venv/`, `__pycache__/`, `.next/`, `dist/` and `build/` where a manifest declares them.
 - Retention trees and release state: `retain/**`, `preserve/**`, `archive/**`, release branches, tags.
-- The run sink `.work/` and every descendant of it, at every level — the engine re-checks this at apply time, so a plan row for the sink is a defect, not a judgement call.
+- The run sink `.work/` — MANIFEST.md, the journal, the transcript and `raw/` captures. A plan row for those is a defect. `tmp/` and `out/` of a finished run are S2-removable, exactly as the S2 example states.
 - The current run's `MANIFEST.md`, and the agent's own scratchpad and transcript.
 - Single copies: the last remaining copy in a backup family, and any item whose removal would leave a scope with no restore point.
 - Anything the user named in this conversation as wanted.

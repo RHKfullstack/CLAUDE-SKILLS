@@ -1,6 +1,6 @@
 # Agent Skills
 
-33 portable agent skills in the canonical `SKILL.md` format: three for design, three stack bridges, thirteen senior engineering audits, and three for workspace and sandbox discipline.
+33 portable agent skills in the canonical `SKILL.md` format: two for design, three stack bridges, seventeen senior engineering audits, seven game-production skills, project-quality-chain, and three for workspace and sandbox discipline.
 
 Written to be **model- and tool-agnostic**. The instructions are plain markdown with YAML frontmatter — no plugin runtime, no SDK, no build step required — so the same files work in Claude Code, the Claude apps, the Agent SDK, and any other agent that can read a file.
 
