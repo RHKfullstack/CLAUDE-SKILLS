@@ -18,11 +18,11 @@ Pick the section for your tool. Nothing here installs a dependency; the skills a
 ```
 
 ```powershell
-# Windows: copy all 38
+# Windows: copy all 39
 Copy-Item -Recurse skills\* "$env:USERPROFILE\.claude\skills\"
 ```
 
-Restart Claude Code (or start a new session). Verify with `/skills` or by asking it to list the available skills — it should report 38.
+Restart Claude Code (or start a new session). Verify with `/skills` or by asking it to list the available skills — it should report 39.
 
 Also copy `adapters/CLAUDE.md` to the project root as `CLAUDE.md` if you want the routing index in project memory.
 
@@ -84,7 +84,7 @@ If a tool can read a file on demand, it can use these skills. Give it `adapters/
 
 ## Verify the install
 
-- The index lists **38** skills.
+- The index lists **39** skills.
 - Every `SKILL.md` starts with `---` on line 1 (no BOM — a byte-order mark breaks YAML parsing; the adapter script strips one, but some tools do not).
 - A spot check: ask the agent to load `senior-code-review` and confirm it returns the procedure, not a summary.
 
