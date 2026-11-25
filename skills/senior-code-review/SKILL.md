@@ -45,7 +45,7 @@ Review for correctness first and style last. Google's review guidance is explici
 5. Check string handling: encoding, trimming, case sensitivity, locale-dependent comparison and sorting.
 6. Check time and date handling: timezone-awareness, DST, leap boundaries, monotonic versus wall-clock for durations.
 7. Check the error paths of every call the change makes — what happens when the returned value is an error, a timeout, or a signal.
-8. EVIDENCE: per-branch table of input â†’ expected â†’ actual, with `file:line` for each concern.
+8. EVIDENCE: per-branch table of input → expected → actual, with `file:line` for each concern.
 
 ## Phase 3 — Failure behaviour
 
@@ -132,7 +132,7 @@ Review for correctness first and style last. Google's review guidance is explici
 | Phase | Artifact |
 |---|---|
 | 1 | Intent statement; risk class; build/test availability |
-| 2 | Input â†’ expected â†’ actual table with `file:line` |
+| 2 | Input → expected → actual table with `file:line` |
 | 3 | Failure-mode table with handling code |
 | 4 | Shared-state inventory; resource pairing list |
 | 5 | Weakness findings quoted with CWE/ASVS IDs |

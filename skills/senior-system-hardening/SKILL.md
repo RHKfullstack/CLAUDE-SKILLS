@@ -26,7 +26,7 @@ Harden a real, running system — host, container, network, service, or cloud ac
 
 ## Core rule
 
-Hardening is measurement â†’ change â†’ re-measurement. Every control you claim must be re-read from the live system after the change, because "I disabled it" and "it is disabled" are different facts. CIS Benchmarks are structured exactly this way: a check, a remediation, and a required audit output ([CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)).
+Hardening is measurement → change → re-measurement. Every control you claim must be re-read from the live system after the change, because "I disabled it" and "it is disabled" are different facts. CIS Benchmarks are structured exactly this way: a check, a remediation, and a required audit output ([CIS Benchmarks](https://www.cisecurity.org/cis-benchmarks)).
 
 ## Phase 1 — Inventory and baseline before touching anything
 

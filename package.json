@@ -22,6 +22,7 @@
     "adapters": "node scripts/build-adapters.mjs",
     "adapters:check": "node scripts/build-adapters.mjs --check",
     "duplicates": "node scripts/check-duplicates.mjs",
+    "encoding": "node scripts/check-encoding.mjs",
     "check": "node --check index.js"
   },
   "devDependencies": {
