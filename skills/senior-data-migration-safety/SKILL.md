@@ -25,11 +25,11 @@ Review a schema or data change so it survives production: classify the DDL, prov
 
 ## Core rule
 
-Schema change is an engineering artifact with its own release cadence, not a side effect of a deploy ([Martin Fowler, Evolutionary Database Design](https://martinfowler.com/articles/evodb.html)). The safe ordering rule is expand/contract: add the new structure, dual-write, backfill, switch reads, stop writing the old structure, and drop it in a later release ([ParallelChange](https://martinfowler.com/bliki/ParallelChange.html)). Blue/green protects the code, not the data â€” with a shared database a code rollback leaves the new schema in place ([BlueGreenDeployment](https://martinfowler.com/bliki/BlueGreenDeployment.html)).
+Schema change is an engineering artifact with its own release cadence, not a side effect of a deploy ([Martin Fowler, Evolutionary Database Design](https://martinfowler.com/articles/evodb.html)). The safe ordering rule is expand/contract: add the new structure, dual-write, backfill, switch reads, stop writing the old structure, and drop it in a later release ([ParallelChange](https://martinfowler.com/bliki/ParallelChange.html)). Blue/green protects the code, not the data — with a shared database a code rollback leaves the new schema in place ([BlueGreenDeployment](https://martinfowler.com/bliki/BlueGreenDeployment.html)).
 
 State in every report: a check that was not executed is `PLANNED` or `UNAVAILABLE`, never `PASSED`.
 
-## Phase 1 â€” Inventory and classify every schema and data change
+## Phase 1 — Inventory and classify every schema and data change
 
 1. Enumerate the migrations in the change set and their order: `git diff --name-only <base>...HEAD -- '*migrations*' '*migration*' '*.sql'`.
 2. Extract the actual statements, not the migration filename: read each file and list every `ALTER`, `CREATE`, `DROP`, `UPDATE`, `DELETE`.
@@ -39,7 +39,7 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 6. List every object touched beyond the one table: foreign keys, views, materialised views, triggers, grants, and application roles that must be able to use the new column.
 7. EVIDENCE: ordered statement list, additive/destructive classification, release mapping, the generated-migration review note, the dependent-object list.
 
-## Phase 2 â€” Prove the expand/contract sequence across releases
+## Phase 2 — Prove the expand/contract sequence across releases
 
 1. Write the six steps explicitly with the migration file and release that owns each: add, dual-write, backfill, read-switch, stop-old-write, drop.
 2. Verify both compatibility cells during a rolling deploy: old code + new schema, and new code + old schema. Name the migration that each cell would break on.
@@ -49,9 +49,9 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 6. Search the codebase for every reader and writer of the old structure and confirm each is migrated: `grep -rn '<table>\.<column>' src/`.
 7. EVIDENCE: the six-step table with file and release per step, the two compatibility cells, the reader/writer inventory with per-site status.
 
-## Phase 3 â€” Determine and measure lock impact on production-sized data
+## Phase 3 — Determine and measure lock impact on production-sized data
 
-1. For each statement, find the documented lock level and rewrite behaviour in the engine's own documentation â€” for Postgres, which `ALTER TABLE` forms take `ACCESS EXCLUSIVE` and which rewrite the table ([PostgreSQL: ALTER TABLE](https://www.postgresql.org/docs/current/ddl-alter.html), [Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html)).
+1. For each statement, find the documented lock level and rewrite behaviour in the engine's own documentation — for Postgres, which `ALTER TABLE` forms take `ACCESS EXCLUSIVE` and which rewrite the table ([PostgreSQL: ALTER TABLE](https://www.postgresql.org/docs/current/ddl-alter.html), [Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html)).
 2. Clone the table with a production-realistic row count and row width, plus concurrent traffic, then run the migration there and time it. A 1,000-row test proves nothing about a 200-million-row table.
 3. Observe blocking during the run: `SELECT * FROM pg_locks WHERE NOT granted;` and `SELECT pid, wait_event_type, wait_event, query FROM pg_stat_activity WHERE state <> 'idle';`.
 4. Set `lock_timeout` in the migration session so the statement fails fast instead of queueing every subsequent query behind it ([PostgreSQL: Lock Management](https://www.postgresql.org/docs/current/runtime-config-locks.html)).
@@ -59,17 +59,17 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 6. Record the wall-clock duration and the peak blocking window, and compare both against the service's acceptable degradation.
 7. EVIDENCE: engine-doc citation per statement, measured duration and lock observations on production-sized data, the `lock_timeout` and `CONCURRENTLY` lines from the migration.
 
-## Phase 4 â€” Make the backfill idempotent, resumable, and rate-limited
+## Phase 4 — Make the backfill idempotent, resumable, and rate-limited
 
 1. Read the backfill script and identify its batch key, batch size, and commit boundary. One transaction over the whole table produces a WAL burst and a rollback longer than the migration.
 2. Prove idempotency by running it twice on the clone and comparing row counts; the second run shows zero changed rows.
 3. Prove resumability by killing the job mid-run and restarting it; the record count must continue from where it stopped without double-applying.
 4. Confirm the transform is deterministic and free of wall-clock or `random()` input, or that such input is materialised before the batch loop.
 5. Rate-limit the batch: sleep between batches or throttle on replica lag, and record the parameter.
-6. Confirm the backfill handles rows written concurrently with it â€” new rows created after the batch cursor passed, and rows updated during the swap.
+6. Confirm the backfill handles rows written concurrently with it — new rows created after the batch cursor passed, and rows updated during the swap.
 7. EVIDENCE: batch parameters from the script, two-run row counts, the kill/restart transcript, the throttle setting.
 
-## Phase 5 â€” Budget for bloat, WAL, and replication lag
+## Phase 5 — Budget for bloat, WAL, and replication lag
 
 1. Treat a bulk `UPDATE` as a capacity event, not only a data event: every touched row leaves a dead tuple ([PostgreSQL: Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html)).
 2. Measure dead tuples and table size before and after on the clone: `SELECT n_dead_tup, n_live_tup, pg_size_pretty(pg_total_relation_size(relid)) FROM pg_stat_user_tables WHERE relname = '<table>';`.
@@ -79,7 +79,7 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 6. Record the disk-growth headroom needed at peak, not only at the end state.
 7. EVIDENCE: dead-tuple and size measurements before/after, autovacuum settings or the manual vacuum step, WAL estimate, observed replica lag, disk headroom figure.
 
-## Phase 6 â€” Verify reversibility, or declare it irreversible
+## Phase 6 — Verify reversibility, or declare it irreversible
 
 1. Run the down-migration after the up-migration on the clone, then compare the schema (`pg_dump --schema-only` diff) and a sample of rows against the pre-migration snapshot.
 2. Where a down-migration does not exist, state that plainly in the release record: the change is forward-only and the rollback plan is a restore.
@@ -89,17 +89,17 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 6. Record the explicit decision and its owner for any irreversible step, rather than leaving it implicit in the migration tool's behaviour.
 7. EVIDENCE: down-migration result with schema and row comparison, or the irreversibility statement; backup timestamp; the owner decision.
 
-## Phase 7 â€” Verify the restore path, not the backup job
+## Phase 7 — Verify the restore path, not the backup job
 
 1. Restore the most recent backup into a scratch database: `pg_restore --clean --if-exists -d <scratch> <dump>` ([pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html), [pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html)).
-2. Run a real query against the restored database and compare a checksum or row count against the source. "Backups exist" is not a recovery capability ([Google SRE â€” Data Integrity](https://sre.google/sre-book/data-integrity/)).
+2. Run a real query against the restored database and compare a checksum or row count against the source. "Backups exist" is not a recovery capability ([Google SRE — Data Integrity](https://sre.google/sre-book/data-integrity/)).
 3. Time the restore and record the number; it is the RTO the migration inherits.
-4. Confirm the backup was taken with a tool and flags that capture everything this change touches â€” roles, extensions, sequences, large objects.
+4. Confirm the backup was taken with a tool and flags that capture everything this change touches — roles, extensions, sequences, large objects.
 5. Confirm the backup is stored somewhere the application role and its credentials do not reach, so an application-level compromise does not also destroy the recovery path.
 6. Re-run the restore drill after the change lands, because the schema moved.
 7. EVIDENCE: the restore command, its query output, the measured duration, the backup tool and flags, the storage-location note.
 
-## Phase 8 â€” Gate the next migration and record the release order
+## Phase 8 — Gate the next migration and record the release order
 
 1. Add a migration linter to CI so the next engineer is gated too: [Squawk](https://squawkhq.com/) for Postgres, [strong_migrations](https://github.com/ankane/strong_migrations) for Rails, [Flyway](https://documentation.red-gate.com/flyway) for versioned ordering and dry runs.
 2. Confirm the linter job is required by branch protection, not advisory.
@@ -147,15 +147,15 @@ State in every report: a check that was not executed is `PLANNED` or `UNAVAILABL
 
 ## Sources
 
-- [Martin Fowler â€” Evolutionary Database Design](https://martinfowler.com/articles/evodb.html) â€” versioned, incremental schema change as an artifact.
-- [Martin Fowler â€” ParallelChange (expand/contract)](https://martinfowler.com/bliki/ParallelChange.html) â€” the ordering rule that makes a rename safe across deploys.
-- [Martin Fowler â€” BlueGreenDeployment](https://martinfowler.com/bliki/BlueGreenDeployment.html) â€” what it does and does not protect, including the shared-database case.
-- [PostgreSQL â€” ALTER TABLE](https://www.postgresql.org/docs/current/ddl-alter.html) â€” which forms rewrite and which lock exclusively.
-- [PostgreSQL â€” Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html) and [Lock Management](https://www.postgresql.org/docs/current/runtime-config-locks.html) â€” lock levels and `lock_timeout`.
-- [PostgreSQL â€” CREATE INDEX](https://www.postgresql.org/docs/current/sql-createindex.html) â€” `CONCURRENTLY` and its transaction constraint.
-- [PostgreSQL â€” Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html) â€” dead tuples and bloat from bulk updates.
-- [PostgreSQL â€” pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html) and [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html) â€” backup and restore commands used in the drill.
-- [Google SRE Book â€” Data Integrity](https://sre.google/sre-book/data-integrity/) â€” defence in depth and restore verification.
-- [gh-ost](https://github.com/github/gh-ost) â€” online schema change with replica-lag throttling and cut-over.
-- [Squawk](https://squawkhq.com/) and [strong_migrations](https://github.com/ankane/strong_migrations) â€” CI gates against lock-taking and rewriting DDL.
-- [Flyway](https://documentation.red-gate.com/flyway) â€” versioned migration ordering, dry runs, and repeatable migrations.
+- [Martin Fowler — Evolutionary Database Design](https://martinfowler.com/articles/evodb.html) — versioned, incremental schema change as an artifact.
+- [Martin Fowler — ParallelChange (expand/contract)](https://martinfowler.com/bliki/ParallelChange.html) — the ordering rule that makes a rename safe across deploys.
+- [Martin Fowler — BlueGreenDeployment](https://martinfowler.com/bliki/BlueGreenDeployment.html) — what it does and does not protect, including the shared-database case.
+- [PostgreSQL — ALTER TABLE](https://www.postgresql.org/docs/current/ddl-alter.html) — which forms rewrite and which lock exclusively.
+- [PostgreSQL — Explicit Locking](https://www.postgresql.org/docs/current/explicit-locking.html) and [Lock Management](https://www.postgresql.org/docs/current/runtime-config-locks.html) — lock levels and `lock_timeout`.
+- [PostgreSQL — CREATE INDEX](https://www.postgresql.org/docs/current/sql-createindex.html) — `CONCURRENTLY` and its transaction constraint.
+- [PostgreSQL — Routine Vacuuming](https://www.postgresql.org/docs/current/routine-vacuuming.html) — dead tuples and bloat from bulk updates.
+- [PostgreSQL — pg_dump](https://www.postgresql.org/docs/current/app-pgdump.html) and [pg_restore](https://www.postgresql.org/docs/current/app-pgrestore.html) — backup and restore commands used in the drill.
+- [Google SRE Book — Data Integrity](https://sre.google/sre-book/data-integrity/) — defence in depth and restore verification.
+- [gh-ost](https://github.com/github/gh-ost) — online schema change with replica-lag throttling and cut-over.
+- [Squawk](https://squawkhq.com/) and [strong_migrations](https://github.com/ankane/strong_migrations) — CI gates against lock-taking and rewriting DDL.
+- [Flyway](https://documentation.red-gate.com/flyway) — versioned migration ordering, dry runs, and repeatable migrations.

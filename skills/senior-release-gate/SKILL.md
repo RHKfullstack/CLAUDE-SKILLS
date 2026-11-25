@@ -18,7 +18,7 @@ Decide, on evidence, whether a specific build may go to production: verification
 
 ## When it does not
 
-- Nothing is built yet â€” use design review or threat model.
+- Nothing is built yet — use design review or threat model.
 - The decision is about one pull request's quality; that is code review or work audit.
 - The system is failing right now; that is incident response, and the gate applies to the fix-release afterwards.
 
@@ -26,20 +26,20 @@ Decide, on evidence, whether a specific build may go to production: verification
 
 The gate is a set of checks that each produce an artifact. If a check produces no artifact, it does not belong in the gate; it belongs in a discussion. Release engineering in the SRE model is a repeatable, automated process precisely so the human judgement is spent on exceptions ([Google SRE Workbook](https://sre.google/workbook/table-of-contents/)).
 
-## Phase 1 â€” Identify and freeze the candidate
+## Phase 1 — Identify and freeze the candidate
 
 1. Record the exact artifact identity: commit SHA, container image digest, package version, and build ID.
-2. Verify the artifact was built once and promoted, not rebuilt per environment â€” a rebuild is a different artifact.
+2. Verify the artifact was built once and promoted, not rebuilt per environment — a rebuild is a different artifact.
 3. Record the version number and confirm it follows the project's semantic versioning or calver rule.
 4. Confirm the freeze: no commits to the release branch after the cut, or an explicit list of cherry-picks with their SHAs.
-5. Confirm the artifact corresponds to the reviewed commit â€” squash, rebase, or cherry-pick can make the shipped tree differ from the audited one.
+5. Confirm the artifact corresponds to the reviewed commit — squash, rebase, or cherry-pick can make the shipped tree differ from the audited one.
 6. Verify the changelog and release notes are generated from the actual commit range, not hand-written from memory.
 7. EVIDENCE: artifact identity record, build-to-review SHA mapping, freeze confirmation, generated changelog.
 
-## Phase 2 â€” Verification evidence
+## Phase 2 — Verification evidence
 
 1. Confirm the full CI suite ran on the exact candidate SHA, and that "green" refers to that SHA, not a parent commit.
-2. Confirm the required checks are set as required in branch protection â€” an advisory check that can be bypassed is not a gate.
+2. Confirm the required checks are set as required in branch protection — an advisory check that can be bypassed is not a gate.
 3. Confirm test categories that matter for this release all ran: unit, integration, contract, migration, and end-to-end smoke.
 4. Confirm the security scans passed at the agreed threshold (dependency audit, SAST, image scan, secret scan) and record the tool versions.
 5. Confirm the artifact signature and provenance verify: `cosign verify <image>`, `slsa-verifier verify-artifact` ([sigstore.dev](https://www.sigstore.dev/), [SLSA v1.1 levels and tracks](https://slsa.dev/spec/v1.1/levels)).
@@ -47,7 +47,7 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 7. Confirm the known-issues list is current and each item is accepted by a named owner.
 8. EVIDENCE: CI run URL and SHA, branch protection settings, scan reports with tool versions, verification transcripts.
 
-## Phase 3 â€” Data and schema safety
+## Phase 3 — Data and schema safety
 
 > Authority split: when the release contains a migration, `senior-data-migration-safety` owns the measurement bar (lock impact, expand/contract ordering, backfill, restore drill). This phase is the gate summary - a PASS here does not mean that skill's bar was met.
 
@@ -60,17 +60,17 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 7. Verify the data backfill, if any, is chunked, resumable, and does not run in the same transaction as the schema change.
 8. EVIDENCE: migration files reviewed, lock-impact analysis, tested restore log, backfill plan.
 
-## Phase 4 â€” Configuration, secrets, and flags
+## Phase 4 — Configuration, secrets, and flags
 
 1. Diff configuration between the current production state and the target state; every changed key must be intentional and reviewed.
 2. Verify every new configuration key has a safe default, or fails fast at startup rather than silently.
-3. Verify new secrets exist in the target environment before deployment, not after â€” a missing secret at boot is an outage ([12-Factor](https://12factor.net/config)).
+3. Verify new secrets exist in the target environment before deployment, not after — a missing secret at boot is an outage ([12-Factor](https://12factor.net/config)).
 4. Verify feature flags exist for the risky behaviour, with a documented owner and a kill switch that does not require a deploy.
 5. Verify the flags default off in production, and that enabling them is a separate, observable step.
 6. Verify no secret value appears in the release notes, changelog, or CI log.
 7. EVIDENCE: config diff, secret-presence check output (names only), flag inventory with owners and defaults.
 
-## Phase 5 â€” Rollback and reversibility
+## Phase 5 — Rollback and reversibility
 
 1. Write the exact rollback command or procedure, and confirm it has been executed in a lower environment.
 2. State the maximum acceptable time to roll back, and confirm it is shorter than the time an outage would be tolerated.
@@ -80,7 +80,7 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 6. Define the rollback trigger: the specific metric value, error rate, or symptom that causes an automatic or human rollback.
 7. EVIDENCE: rollback runbook, lower-environment rollback rehearsal log, previous artifact digest, defined trigger thresholds.
 
-## Phase 6 â€” Observability and operator readiness
+## Phase 6 — Observability and operator readiness
 
 1. Confirm the release emits or updates the signals needed to see it working: request rate, error rate, latency, saturation, plus one business-level indicator ([Google SRE Book](https://sre.google/sre-book/table-of-contents/), monitoring distributed systems).
 2. Confirm dashboards include the new behaviour; a metric nobody can graph is not observability.
@@ -90,17 +90,17 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 6. Confirm on-call coverage for the release window and the period after, including the change author.
 7. EVIDENCE: dashboard links, alert definitions, runbook file, on-call schedule, log sample with correlation ID.
 
-## Phase 7 â€” Deployment mechanics and sequencing
+## Phase 7 — Deployment mechanics and sequencing
 
-1. Confirm the rollout strategy: all at once, rolling, blue/green, or canary â€” and its blast radius.
+1. Confirm the rollout strategy: all at once, rolling, blue/green, or canary — and its blast radius.
 2. Verify the canary or rolling step gates on real health signals, not on "pod started".
 3. Verify the deployment does not depend on a manual step that only one person knows.
-4. Verify it is not being deployed into a known-degraded system; check the current error budget and open alerts first ([Google SRE Book](https://sre.google/sre-book/table-of-contents/) â€” error budgets and the release freeze that follows their exhaustion are SRE practice; [DORA](https://dora.dev/) measures deployment frequency, change failure rate and recovery time, not budgets).
+4. Verify it is not being deployed into a known-degraded system; check the current error budget and open alerts first ([Google SRE Book](https://sre.google/sre-book/table-of-contents/) — error budgets and the release freeze that follows their exhaustion are SRE practice; [DORA](https://dora.dev/) measures deployment frequency, change failure rate and recovery time, not budgets).
 5. Verify the timing avoids overlapping with another team's migration or a scheduled heavy job.
 6. Verify the deploy is reproducible: same command, same inputs, no manual console edits that are not captured in IaC.
 7. EVIDENCE: rollout plan, health gate definition, pre-deploy state snapshot, deploy log with timestamps.
 
-## Phase 8 â€” Go/no-go and post-release verification
+## Phase 8 — Go/no-go and post-release verification
 
 1. Record each gate item as PASS, FAIL, or WAIVED WITH OWNER - except verification, data safety, rollback and artifact identity, which have no waiver path and are FAIL-only; any FAIL with no waiver is a no-go.
 2. Record the decision, the decider, and the timestamp.
@@ -112,10 +112,10 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 
 ## Gate decision vocabulary
 
-- GO â€” every gate item PASS, or waived by a named owner with a compensating control and an expiry.
-- GO WITH CONDITIONS â€” a bounded, time-limited deviation with a monitoring plan, a rollback trigger, and an owner.
-- NO-GO â€” a FAIL on verification, data safety, rollback, or artifact identity; no waiver path exists for these.
-- HOLD â€” a dependency outside this release is blocking; re-run the whole gate when it clears, not just the failed item.
+- GO — every gate item PASS, or waived by a named owner with a compensating control and an expiry.
+- GO WITH CONDITIONS — a bounded, time-limited deviation with a monitoring plan, a rollback trigger, and an owner.
+- NO-GO — a FAIL on verification, data safety, rollback, or artifact identity; no waiver path exists for these.
+- HOLD — a dependency outside this release is blocking; re-run the whole gate when it clears, not just the failed item.
 
 ## Definition of done
 
@@ -144,7 +144,7 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 2. **Migration locking a hot table.** An `ALTER TABLE` or non-concurrent index build blocks writes for minutes on a large table and takes the service down during the deploy window.
 3. **Forward-only migration with no compatible old code.** The new schema ships, then the rollback restores old code that does not understand the changed columns.
 4. **Feature flag defaulting on.** The flag was meant to be off; it ships enabled and turns the canary into the full rollout.
-5. **Missing secret discovered at boot.** The config key was added to the template but not to the production secret store, so every new pod crash-loops while the old ones keep serving â€” until the next restart.
+5. **Missing secret discovered at boot.** The config key was added to the template but not to the production secret store, so every new pod crash-loops while the old ones keep serving — until the next restart.
 6. **Rollback never rehearsed.** The documented rollback references a script, image tag, or permission that no longer exists; it is discovered during the incident.
 7. **Health check that always passes.** The readiness probe checks that the process is up rather than that dependencies are reachable, so the rollout proceeds into a failing state.
 8. **Irreversible side effects before verification.** Messages are published, emails sent, or payments taken during the canary phase, so rollback does not undo the business effect.
@@ -154,13 +154,13 @@ The gate is a set of checks that each produce an artifact. If a check produces n
 
 ## Sources
 
-- [Google SRE Workbook](https://sre.google/workbook/table-of-contents/) â€” release engineering, canarying, and rollback practice.
-- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) â€” monitoring, alerting, and error budgets.
-- [DORA](https://dora.dev/) â€” deployment frequency, change failure rate, and failed-deployment recovery.
-- [SLSA](https://slsa.dev/) â€” general pointer; the [SLSA v1.1 levels page](https://slsa.dev/spec/v1.1/levels) defines the four Build levels (L0-L3), and the Source track is a separate part of the same specification ([v1.1 spec index](https://slsa.dev/spec/v1.1/)).
-- [Sigstore](https://www.sigstore.dev/) â€” signing and verifying the released artifact; the [Cosign verification docs](https://docs.sigstore.dev/cosign/verifying/verify/) cover the keyless verify flow.
-- [NIST SP 800-218, SSDF](https://csrc.nist.gov/pubs/sp/800/218/final) â€” RV.2 assess, prioritise and remediate vulnerabilities, and RV.3 analyse them for root causes, both before release.
-- [12-Factor App â€” Config](https://12factor.net/config) â€” config, build/release/run separation, and disposability.
-- [CIS Controls](https://www.cisecurity.org/controls) â€” change and configuration management safeguards; the enumerated list is the [18 CIS Critical Security Controls](https://www.cisecurity.org/controls/cis-controls-list).
-- [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/) â€” operational excellence and change management.
-- [Architecture Decision Records](https://adr.github.io/) â€” record the delivery decisions made at the gate.
+- [Google SRE Workbook](https://sre.google/workbook/table-of-contents/) — release engineering, canarying, and rollback practice.
+- [Google SRE Book](https://sre.google/sre-book/table-of-contents/) — monitoring, alerting, and error budgets.
+- [DORA](https://dora.dev/) — deployment frequency, change failure rate, and failed-deployment recovery.
+- [SLSA](https://slsa.dev/) — general pointer; the [SLSA v1.1 levels page](https://slsa.dev/spec/v1.1/levels) defines the four Build levels (L0-L3), and the Source track is a separate part of the same specification ([v1.1 spec index](https://slsa.dev/spec/v1.1/)).
+- [Sigstore](https://www.sigstore.dev/) — signing and verifying the released artifact; the [Cosign verification docs](https://docs.sigstore.dev/cosign/verifying/verify/) cover the keyless verify flow.
+- [NIST SP 800-218, SSDF](https://csrc.nist.gov/pubs/sp/800/218/final) — RV.2 assess, prioritise and remediate vulnerabilities, and RV.3 analyse them for root causes, both before release.
+- [12-Factor App — Config](https://12factor.net/config) — config, build/release/run separation, and disposability.
+- [CIS Controls](https://www.cisecurity.org/controls) — change and configuration management safeguards; the enumerated list is the [18 CIS Critical Security Controls](https://www.cisecurity.org/controls/cis-controls-list).
+- [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/) — operational excellence and change management.
+- [Architecture Decision Records](https://adr.github.io/) — record the delivery decisions made at the gate.
